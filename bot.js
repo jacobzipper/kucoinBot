@@ -32,17 +32,21 @@ function arbitrage() {
                   amountprl = amountprl - (amountprl * .0011);
                   amountprl = amountprl.toFixed(4);
                   console.log(amountprl);
-                  setTimeout(function() {
-                    kc.createOrder({pair: 'PRL-ETH', amount: amountprl, price: .00001, type: 'SELL'}).then(function(res) {
-                      var amounteth = (amountprl * prleth["BUY"][0][0]) * .999;
-                      amounteth = amounteth.toFixed(6);
-                      eth += amounteth;
-                      inData = false;
-                      console.log("TRADED");
-                      console.log("BTC: " + btc);
-                      console.log("ETH: " + eth);
-                    }).catch(console.error);
-                  }, 1500);
+                  kc.cancelOrder({pair: 'PRL-BTC', txOid: res["data"]["orderOid"]}).then(function(res) {
+                    setTimeout(function() {
+                      kc.getBalance({symbol: 'PRL'}).then(function(res) {
+                        kc.createOrder({pair: 'PRL-ETH', amount: amountprl, price: .000001, type: 'SELL'}).then(function(res) {
+                          var amounteth = (amountprl * prleth["BUY"][0][0]) * .999;
+                          amounteth = amounteth.toFixed(6);
+                          eth += amounteth;
+                          inData = false;
+                          console.log("TRADED");
+                          console.log("BTC: " + btc);
+                          console.log("ETH: " + eth);
+                        }).catch(console.error);
+                      }).catch(console.error);
+                    }, 1500);
+                  }).catch(console.error);
                 }).catch(console.error);
               } else {
                 inData = false;
@@ -59,15 +63,19 @@ function arbitrage() {
                   amountprl = amountprl - (amountprl * .0011);
                   amountprl = amountprl.toFixed(4);
                   console.log(amountprl);
-                  setTimeout(function() {
-                    kc.createOrder({pair: 'PRL-BTC', amount: amountprl, price: .00001, type: 'SELL'}).then(function(res) {
-                      btc += (amountprl * prlbtc["BUY"][0][0]) * .9989;
-                      inData = false;
-                      console.log("TRADED");
-                      console.log("BTC: " + btc);
-                      console.log("ETH: " + eth);
-                    }).catch(console.error);
-                  }, 1500);
+                  kc.cancelOrder({pair: 'PRL-ETH', txOid: res["data"]["orderOid"]}).then(function(res){
+                    setTimeout(function() {
+                      kc.getBalance({symbol: 'PRL'}).then(function(res){
+                        kc.createOrder({pair: 'PRL-BTC', amount: res["data"]["balance"], price: .000001, type: 'SELL'}).then(function(res) {
+                          btc += (amountprl * prlbtc["BUY"][0][0]) * .999;
+                          inData = false;
+                          console.log("TRADED");
+                          console.log("BTC: " + btc);
+                          console.log("ETH: " + eth);
+                        }).catch(console.error);
+                      }).catch(console.error);
+                    }, 1000);
+                  });
                 }).catch(console.error);
               } else {
                 inData = false;
