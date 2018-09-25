@@ -5,7 +5,7 @@ function btcProfitable(shitcoinbtc, shitcoineth, ethbtc) {
 }
 
 const Kucoin = require('kucoin-api');
-let kc = new Kucoin("5a59357d3f705c03eec04172", "4d84396b-6f31-4d5f-86a5-ced60fd804d2");
+let kc = new Kucoin("REDACTED", "REDACTED");
 var inData = false;
 var btc = 0;
 var eth = 0;
